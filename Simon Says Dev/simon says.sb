@@ -1,0 +1,190 @@
+cd = Program.Directory 'stores program directory in a variable to later refer to it more easily
+GraphicsWindow.Width = 600 'sets the graphicswindow (from now on "GW") width to 600 px
+GraphicsWindow.Height = 600 'sets the GW height to 600 px
+GraphicsWindow.Top = 10 'sets the GW top to 10 px below the top of the screen
+GraphicsWindow.Left = 130
+GraphicsWindow.CanResize = 0
+animationDelay = 10 'variable to control how fast the animations are
+level = 0 'variable for the current level
+moves = "" 'array for the move order
+playerMoves = "" 'array for the moves the player inputs
+lose = "False" 'variable to check if player has lost
+notStarted = "True" 'variable to hold the main menu before the game starts
+baseImg = ImageList.LoadImage(cd + "/Data/base.png") 'loads the base image of the board
+GraphicsWindow.DrawImage(baseImg, 50, 50) 'draws the base image to the GW
+GraphicsWindow.BackgroundColor = "Black"
+GraphicsWindow.FontName = "Consolas"
+GraphicsWindow.BrushColor = "Gray"
+GraphicsWindow.FontSize = 20
+GraphicsWindow.Title = "Memory Game"
+Program.Delay(1000)
+playing = "False"
+sounding  = "True"
+song = cd + "/Data/Music/Song.mp3"
+tone1 = cd + "/Data/Music/1.mp3"
+tone2 = cd + "/Data/Music/2.mp3"
+tone3 = cd + "/Data/Music/3.mp3"
+tone4 = cd + "/Data/Music/4.mp3"
+
+'-----------Mouse Coords------------'
+Sub mouseCoords
+  TextWindow.WriteLine("X: " + Mouse.MouseX+ "  Y: " +Mouse.MouseY)
+EndSub
+'-----------------------------------------'
+
+'---------------Red Animation---------'
+Sub Red 'function for the red light animation
+  For x = 0 To 16
+    img = ImageList.LoadImage(cd + "/Data/Red/frame_"+ x +"_delay-0.08s.png")
+    GraphicsWindow.DrawImage(img, 50, 50)
+    Program.Delay(animationDelay)
+  EndFor
+  GraphicsWindow.DrawImage(baseImg, 50, 50)
+  If sounding = "True" Then
+    Sound.PlayAndWait(tone1)
+  EndIf
+EndSub
+'------------------------------------------'
+
+'--------------------Purple Animation----------------------'
+Sub Purple 'function for the purple light animation
+  For x = 0 To 13
+    img = ImageList.LoadImage(cd + "/Data/Purple/frame_"+ x +"_delay-0.08s.png")
+    GraphicsWindow.DrawImage(img, 50, 50)
+    Program.Delay(animationDelay)
+  EndFor
+  GraphicsWindow.DrawImage(baseImg, 50, 50)
+  If sounding = "True" Then
+    Sound.PlayAndWait(tone2)
+  EndIf
+EndSub
+'----------------------------------------------------------------'
+
+'----------------------Green Animation---------------------'
+Sub Green 'function for the green light animation
+  For x = 0 To 17
+    img = ImageList.LoadImage(cd + "/Data/Green/frame_"+ x +"_delay-0.08s.png")
+    GraphicsWindow.DrawImage(img, 50, 50)
+    Program.Delay(animationDelay)
+  EndFor
+  GraphicsWindow.DrawImage(baseImg, 50, 50)
+  If sounding = "True" Then
+    Sound.PlayAndWait(tone3)
+  EndIf
+EndSub
+'---------------------------------------------------------------'
+
+'----------------------Yellow Animation---------------------'
+Sub Yellow 'function for the yellow  light animation
+  For x = 0 To 17
+    img = ImageList.LoadImage(cd + "/Data/Yellow/frame_"+ x +"_delay-0.08s.png")
+    GraphicsWindow.DrawImage(img, 50, 50)
+    Program.Delay(animationDelay)
+  EndFor
+  GraphicsWindow.DrawImage(baseImg, 50, 50)
+  If sounding = "True" Then
+    Sound.PlayAndWait(tone4)
+  EndIf
+EndSub
+'----------------------------------------------------------------'
+
+'-------------Start Menu------------'
+Sub Start 'start menu routine
+  Yellow()
+  Red()
+  Green()
+  Purple()
+  GraphicsWindow.DrawText(220, 70, "CLICK TO START!")
+  While notStarted = "True"
+    If Mouse.IsLeftButtonDown Then
+      notStarted = "False"
+    EndIf
+  EndWhile
+EndSub
+'---------------------------------------'
+
+'----------Pattern Generator------'
+Sub genPattern 'this function generates a pattern for the player
+  GraphicsWindow.Clear()
+  GraphicsWindow.DrawImage(baseImg, 50, 50)
+  levelDisp = level + 1
+  GraphicsWindow.DrawText(240, 70, "Level " + levelDisp )
+  Program.Delay(1000)
+  For i = 1 To level+1
+    moves[i] = Math.GetRandomNumber(4)
+  EndFor
+  For v = 1 To Array.GetItemCount(moves)
+    If moves[v] = 1 Then
+      Red()
+    ElseIf moves[v] = 2 Then
+      Purple()
+    ElseIf moves[v] = 3 Then
+      Green()
+    Else
+      Yellow()
+    EndIf
+  EndFor
+  level = level+1
+EndSub
+'---------------------------------'
+
+'---------Click Agent-------'
+Sub checkForClick 'this routine checks for when the player clicks on each color and displays the respective animation, as well as adding their choice to the array that counts for the player's actions
+  playerSize = Array.GetItemCount(playerMoves)
+  If Mouse.IsLeftButtonDown Then
+    If 290 <= mouse.MouseX And mouse.MouseX <= 450 And 191 <= mouse.MouseY And mouse.MouseY <= 331 and hasClicked = "False" Then 
+      Yellow()
+      playerMoves[playerSize+1] = 4
+      hasClicked = "True"
+    EndIf
+    If 290 <= Mouse.MouseX And mouse.MouseX <= 450 And 348 <= Mouse.MouseY And Mouse.MouseY <= 492 and hasClicked = "False" Then
+      Green()
+      playerMoves[playerSize+1] = 3
+      hasClicked = "True"
+    EndIf
+    If 468 <= Mouse.MouseX And mouse.MouseX <= 613 And 187 <= Mouse.MouseY And Mouse.MouseY <= 331 and hasClicked = "False" Then
+      Red()
+      playerMoves[playerSize+1] = 1
+      hasClicked = "True"
+    EndIf
+    If 469 <= Mouse.MouseX And mouse.MouseX <= 613 And 347 <= Mouse.MouseY And Mouse.MouseY <= 491 and hasClicked = "False" Then
+      Purple()
+      playerMoves[playerSize+1] = 2
+      hasClicked = "True"
+    EndIf
+  EndIf
+EndSub
+'-------------------------------'
+
+
+'---------Lost Routine--------'
+Sub Lost
+  GraphicsWindow.DrawText(220, 70, "You Lost!")
+  Program.Delay(1000)
+  Program.End()
+EndSub
+'----------------------------------'
+
+'---------Main program---------'
+Start() 'plays main menu
+GraphicsWindow.Clear()
+While lose = "False" And notStarted = "False" 'this is the while loop that makes the game run. it runs while the player has not lost and the main menu has not been clicked out off.
+  If playing = "False" Then 'if it is not the player's turn, generate a pattern for them
+    genPattern()
+    hasClicked = "False" 'declare hasClicked to false
+  EndIf
+  playing = "True" 'variable to switch that it is now the player's turn
+  checkForClick()  'checks for the player's clicks
+  For i = 1 To Array.GetItemCount(moves) 'this for loop goes through the players choices and checks if they are correct, relative to the previously generated pattern
+    If moves[i] <> playerMoves[i] and hasClicked = "True" And Array.ContainsIndex(playerMoves, i) <> "False"  Then 'if there is a discrepancy in the comparison of the randomly generated move array and the array that the player inputs to, it ends the game
+      GraphicsWindow.Clear()
+      Lost()
+    ElseIf moves = playerMoves and hasClicked = "True" Then 'else if the player inputed the correct moves, it sets playing to false so another pattern is generated and runs the while loop again. also clears the player moves array.
+      playing = "False"
+      hasClicked = "False"
+      playerMoves = ""
+    EndIf
+  EndFor
+  hasClicked = "False"
+EndWhile
+'------------------------------------'
