@@ -1,3 +1,4 @@
+'--------------------------------------Variable and Constant Declaration-----------------------------------------'
 cd = Program.Directory 'stores program directory in a variable to later refer to it more easily
 GraphicsWindow.Width = 600 'sets the graphicswindow (from now on "GW") width to 600 px
 GraphicsWindow.Height = 600 'sets the GW height to 600 px
@@ -21,10 +22,46 @@ Program.Delay(1000)
 playing = "False"
 sounding  = "True"
 song = cd + "/Data/Music/Song.mp3"
-tone1 = cd + "/Data/Music/1.mp3"
-tone2 = cd + "/Data/Music/2.mp3"
-tone3 = cd + "/Data/Music/3.mp3"
-tone4 = cd + "/Data/Music/4.mp3"
+tones = ""
+'------------------------------------------------------------------------------------------------------------------------------'
+
+'-------------Tones Array--------------'
+For i=1 to 4
+  tones[i] = cd + "/Data/Music/"+ i +".mp3"
+EndFor
+'-----------------------------------------'
+
+'----------Red Images Array--------' 
+redImgs = File.GetFiles(cd + "/Data/Red/")
+redImgCount = Array.GetItemCount(redImgs)
+For x = 0 To redImgCount
+    redImgs[x] = ImageList.LoadImage(cd + "/Data/Red/frame_"+ x +"_delay-0.08s.png")
+EndFor
+'-----------------------------------------'
+
+'----------Purple Images Array--------' 
+purpleImgs = File.GetFiles(cd + "/Data/Purple/")
+purpleImgCount = Array.GetItemCount(purpleImgs)
+For x = 0 To purpleImgCount
+    purpleImgs[x] = ImageList.LoadImage(cd + "/Data/Purple/frame_"+ x +"_delay-0.08s.png")
+EndFor
+'-----------------------------------------'
+
+'----------Green Images Array--------' 
+greenImgs = File.GetFiles(cd + "/Data/Red/")
+greenImgCount = Array.GetItemCount(greenImgs)
+For x = 0 To greenImgCount
+    greenImgs[x] = ImageList.LoadImage(cd + "/Data/Green/frame_"+ x +"_delay-0.08s.png")
+EndFor
+'-----------------------------------------'
+
+'----------Yellow Images Array--------' 
+yellowImgs = File.GetFiles(cd + "/Data/Yellow/")
+yellowImgCount = Array.GetItemCount(yellowImgs)
+For x = 0 To yellowImgCount
+    yellowImgs[x] = ImageList.LoadImage(cd + "/Data/Yellow/frame_"+ x +"_delay-0.08s.png")
+EndFor
+'-----------------------------------------'
 
 '-----------Mouse Coords------------'
 Sub mouseCoords
@@ -34,56 +71,52 @@ EndSub
 
 '---------------Red Animation---------'
 Sub Red 'function for the red light animation
-  For x = 0 To 16
-    img = ImageList.LoadImage(cd + "/Data/Red/frame_"+ x +"_delay-0.08s.png")
-    GraphicsWindow.DrawImage(img, 50, 50)
+  For x = 0 To redImgCount
+    GraphicsWindow.DrawImage(redImgs[x], 50, 50)
     Program.Delay(animationDelay)
   EndFor
   GraphicsWindow.DrawImage(baseImg, 50, 50)
   If sounding = "True" Then
-    Sound.PlayAndWait(tone1)
+    Sound.PlayAndWait(tones[1])
   EndIf
 EndSub
 '------------------------------------------'
 
 '--------------------Purple Animation----------------------'
 Sub Purple 'function for the purple light animation
-  For x = 0 To 13
-    img = ImageList.LoadImage(cd + "/Data/Purple/frame_"+ x +"_delay-0.08s.png")
-    GraphicsWindow.DrawImage(img, 50, 50)
+  For x = 0 To purpleImgCount
+    GraphicsWindow.DrawImage(purpleImgs[x], 50, 50)
     Program.Delay(animationDelay)
   EndFor
   GraphicsWindow.DrawImage(baseImg, 50, 50)
   If sounding = "True" Then
-    Sound.PlayAndWait(tone2)
+    Sound.PlayAndWait(tones[2])
   EndIf
 EndSub
 '----------------------------------------------------------------'
 
 '----------------------Green Animation---------------------'
 Sub Green 'function for the green light animation
-  For x = 0 To 17
-    img = ImageList.LoadImage(cd + "/Data/Green/frame_"+ x +"_delay-0.08s.png")
-    GraphicsWindow.DrawImage(img, 50, 50)
+  For x = 0 To greenImgCount
+    GraphicsWindow.DrawImage(greenImgs[x], 50, 50)
     Program.Delay(animationDelay)
   EndFor
   GraphicsWindow.DrawImage(baseImg, 50, 50)
   If sounding = "True" Then
-    Sound.PlayAndWait(tone3)
+    Sound.PlayAndWait(tones[3])
   EndIf
 EndSub
 '---------------------------------------------------------------'
 
 '----------------------Yellow Animation---------------------'
 Sub Yellow 'function for the yellow  light animation
-  For x = 0 To 17
-    img = ImageList.LoadImage(cd + "/Data/Yellow/frame_"+ x +"_delay-0.08s.png")
-    GraphicsWindow.DrawImage(img, 50, 50)
+  For x = 0 To yellowImgCount
+    GraphicsWindow.DrawImage(yellowImgs[x], 50, 50)
     Program.Delay(animationDelay)
   EndFor
   GraphicsWindow.DrawImage(baseImg, 50, 50)
   If sounding = "True" Then
-    Sound.PlayAndWait(tone4)
+    Sound.PlayAndWait(tones[4])
   EndIf
 EndSub
 '----------------------------------------------------------------'
@@ -110,7 +143,7 @@ Sub genPattern 'this function generates a pattern for the player
   levelDisp = level + 1
   GraphicsWindow.DrawText(240, 70, "Level " + levelDisp )
   Program.Delay(1000)
-  For i = 1 To level+1
+  For i = 1 To level + 1
     moves[i] = Math.GetRandomNumber(4)
   EndFor
   For v = 1 To Array.GetItemCount(moves)
